@@ -2,7 +2,7 @@ import numpy as np
 from src.optimizer import Optimizer
 
 
-class ACOR(Optimizer):
+class ACO(Optimizer):
 
     def __init__(self, epoch=10000, pop_size=100, sample_count=25, intent_factor=0.5, zeta=1.0, **kwargs):
         """
