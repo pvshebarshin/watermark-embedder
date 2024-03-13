@@ -2,7 +2,7 @@ import numpy as np
 from src.optimizer import Optimizer
 
 
-class BaseDE(Optimizer):
+class DE(Optimizer):
 
     def __init__(self, epoch=10000, pop_size=100, wf=1.0, cr=0.9, strategy=0, **kwargs):
         """
