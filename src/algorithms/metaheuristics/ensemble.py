@@ -35,17 +35,14 @@ class MetaheuristicEnsemble:
 
     def solveProblem(self, problem):
         best_position1, best_fitness1 = self.model1.solve(problem)
-        print(f"Best solution: {best_position1}, Best fitness: {best_fitness1}")
 
         if self.model2 is not None:
 
             best_position2, best_fitness2 = self.model2.solve(problem)
-            print(f"Best solution: {best_position2}, Best fitness: {best_fitness2}")
 
             if self.model3 is not None:
 
                 best_position3, best_fitness3 = self.model3.solve(problem)
-                print(f"Best solution: {best_position3}, Best fitness: {best_fitness3}")
                 avg_cor = self.average((best_fitness1, best_fitness2, best_fitness3))
                 avg_arr = self.find_average_arrays3(best_position1, best_position2, best_position3)
                 return avg_arr, avg_cor
