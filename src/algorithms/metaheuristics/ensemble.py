@@ -1,3 +1,8 @@
+import threading
+from queue import Queue
+import concurrent.futures
+
+
 class MetaheuristicEnsemble:
 
     def __init__(self, model1, model2=None, model3=None):
@@ -34,25 +39,38 @@ class MetaheuristicEnsemble:
         return average_array
 
     def solveProblem(self, problem):
-        best_position1, best_fitness1 = self.model1.solve(problem)
+        with (concurrent.futures.ThreadPoolExecutor() as executor):
 
-        if self.model2 is not None:
+            future1 = executor.submit(self.model1.solve, problem)
 
-            best_position2, best_fitness2 = self.model2.solve(problem)
+            if self.model2 is not None:
 
-            if self.model3 is not None:
+                future2 = executor.submit(self.model2.solve, problem)
 
-                best_position3, best_fitness3 = self.model3.solve(problem)
-                avg_cor = self.average((best_fitness1, best_fitness2, best_fitness3))
-                avg_arr = self.find_average_arrays3(best_position1, best_position2, best_position3)
-                return avg_arr, avg_cor
+                if self.model3 is not None:
+
+                    future3 = executor.submit(self.model3.solve, problem)
+
+                    best_position1, best_fitness1 = future1.result()
+                    best_position2, best_fitness2 = future2.result()
+                    best_position3, best_fitness3 = future3.result()
+                    avg_cor = self.average((best_fitness1, best_fitness2, best_fitness3))
+                    avg_arr = self.find_average_arrays3(best_position1, best_position2, best_position3)
+                    return avg_arr, avg_cor
+
+                else:
+
+                    best_position1, best_fitness1 = future1.result()
+                    best_position2, best_fitness2 = future2.result()
+                    avg_cor = self.average((best_fitness1, best_fitness2))
+                    avg_arr = self.find_average_arrays2(best_position1, best_position2)
+                    return avg_arr, avg_cor
 
             else:
 
-                avg_cor = self.average((best_fitness1, best_fitness2))
-                avg_arr = self.find_average_arrays2(best_position1, best_position2)
-                return avg_arr, avg_cor
+                best_position1, best_fitness1 = future1.result()
+                return best_position1, best_fitness1
 
-        else:
+# берем популяцию, отрабатываем первой по ней, затем другую и популяю передаем второй
 
-            return best_position1, best_fitness1
+# Во время оптимизации по очереди выбираем метаэвристики (чередуем по поколениям)

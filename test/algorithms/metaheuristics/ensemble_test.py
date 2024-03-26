@@ -59,7 +59,7 @@ class EnsembleTest(unittest.TestCase):
 
         de = DE(epoch, pop_size, wf, cr, strategy)
 
-        epoch = 100
+        epoch = 400
         pop_size = 50
 
         hho = HHO(epoch, pop_size)
