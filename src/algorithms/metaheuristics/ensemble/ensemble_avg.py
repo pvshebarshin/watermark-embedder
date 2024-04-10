@@ -1,9 +1,7 @@
-import threading
-from queue import Queue
 import concurrent.futures
 
 
-class MetaheuristicEnsemble:
+class MetaheuristicEnsembleAvg:
 
     def __init__(self, model1, model2=None, model3=None):
         self.model1 = model1
