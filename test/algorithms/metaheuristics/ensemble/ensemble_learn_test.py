@@ -2,12 +2,12 @@ import unittest
 
 from algorithms.metaheuristics.abc import ABC
 from algorithms.metaheuristics.de import DE
-from algorithms.metaheuristics.ensemble.ensemble_avg import MetaheuristicEnsembleAvg
+from algorithms.metaheuristics.ensemble.ensemble_learn import MetaheuristicEnsembleLearn
 from algorithms.metaheuristics.hho import HHO
 from utils.functions import brent_function, schwefel_function, rosenbrook_function
 
 
-class EnsembleAvgTest(unittest.TestCase):
+class EnsembleLearnTest(unittest.TestCase):
 
     problem_brent = {
         "fit_func": brent_function,
@@ -37,21 +37,21 @@ class EnsembleAvgTest(unittest.TestCase):
     }
 
     def test_ensemble_one_evr(self):
-        epoch = 500
+        epoch = 40
         pop_size = 50
         wf = 0.7
         cr = 0.9
         strategy = 0
 
         model = DE(epoch, pop_size, wf, cr, strategy)
-        ensemble = MetaheuristicEnsembleAvg(model)
-        best_position, best_fitness = ensemble.solveProblem(EnsembleAvgTest.problem_brent)
+        ensemble = MetaheuristicEnsembleLearn(model)
+        best_position, best_fitness = ensemble.solveProblem(EnsembleLearnTest.problem_brent)
         print(f"Best solution: {best_position}, Best fitness: {best_fitness}")
 
         self.assertTrue(best_fitness < 0.1)
 
     def test_ensemble_two_evr(self):
-        epoch = 400
+        epoch = 20
         pop_size = 50
         wf = 0.7
         cr = 0.9
@@ -59,18 +59,18 @@ class EnsembleAvgTest(unittest.TestCase):
 
         de = DE(epoch, pop_size, wf, cr, strategy)
 
-        epoch = 400
+        epoch = 20
         pop_size = 50
 
         hho = HHO(epoch, pop_size)
 
-        ensemble = MetaheuristicEnsembleAvg(de, hho)
-        best_position, best_fitness = ensemble.solveProblem(EnsembleAvgTest.problem_schwefel)
+        ensemble = MetaheuristicEnsembleLearn(de, hho)
+        best_position, best_fitness = ensemble.solveProblem(EnsembleLearnTest.problem_schwefel)
         print(f"Best solution: {best_position}, Best fitness: {best_fitness}")
         self.assertTrue(best_fitness < 0.1)
 
     def test_ensemble_three_evr(self):
-        epoch = 400
+        epoch = 20
         pop_size = 50
         wf = 0.7
         cr = 0.9
@@ -78,18 +78,18 @@ class EnsembleAvgTest(unittest.TestCase):
 
         de = DE(epoch, pop_size, wf, cr, strategy)
 
-        epoch = 200
+        epoch = 20
         pop_size = 50
 
         hho = HHO(epoch, pop_size)
 
         n_limits = 50
         pop_size = 50
-        epoch = 200
+        epoch = 20
 
         abc = ABC(epoch, pop_size, n_limits)
 
-        ensemble = MetaheuristicEnsembleAvg(de, hho, abc)
-        best_position, best_fitness = ensemble.solveProblem(EnsembleAvgTest.problem_rosenbrook)
+        ensemble = MetaheuristicEnsembleLearn(de, hho, abc)
+        best_position, best_fitness = ensemble.solveProblem(EnsembleLearnTest.problem_rosenbrook)
         print(f"Best solution: {best_position}, Best fitness: {best_fitness}")
         self.assertTrue(best_fitness < 0.1)
