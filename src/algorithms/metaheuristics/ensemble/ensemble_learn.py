@@ -3,6 +3,10 @@ import random
 import numpy as np
 
 
+def rnd(choices):
+    return random.choice(choices)
+
+
 class MetaheuristicEnsembleLearn:
 
     def __init__(self, model1, model2=None, model3=None):
@@ -10,11 +14,8 @@ class MetaheuristicEnsembleLearn:
         self.model2 = model2
         self.model3 = model3
 
-    def rnd(self, choices):
-        return random.choice(choices)
-
     def switchModel3(self, problem, choices, starting_positions=None):
-        dice = self.rnd(choices)
+        dice = rnd(choices)
         if starting_positions is not None:
             if dice == 1:
                 choices.remove(dice)

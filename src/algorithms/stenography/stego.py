@@ -2,13 +2,33 @@ import numpy as np
 import math
 import cv2
 
+from algorithms.metaheuristics.hho import HHO
+from utils.comparator import optimization_function
 
-def embed_secret_message(image_container, secret_message, phi_0, phi_1, A_crit, iterations, p):
-    # конвертирование изображения в массив numpy
-    img_arr = np.array(image_container)
+
+def embed_secret_message(image_container, secret_message, phi_0=-1.57, phi_1=1.57, iterations=5):
+    # define problem
+    problem = {
+        "fit_func": optimization_function,
+        "lb": [-10, -10],
+        "ub": [10, 10],
+        "minmax": "min",
+        "log_to": None,
+        "save_population": False,
+    }
+
+    # convert image to floats and do dft saving as complex output
+    dft = cv2.dft(np.float32(image_container), flags=cv2.DFT_COMPLEX_OUTPUT)
+
+    # apply shift of origin from upper left corner to center of image
+    dft_shift = np.fft.fftshift(dft)
+
+    # extract magnitude and phase images
+    mag, phase = cv2.cartToPolar(dft_shift[:, :, 0], dft_shift[:, :, 1])
+    phase -= math.pi
 
     # получение размеров изображения
-    height, width, channels = img_arr.shape
+    height, width, channels = phase.shape
 
     # количество блоков по вертикали и горизонтали
     blocks_v = height // 8
@@ -23,15 +43,29 @@ def embed_secret_message(image_container, secret_message, phi_0, phi_1, A_crit, 
     # Извлекаем биты из сообщения
     bits = extract_bits_from_word(secret_message)
 
+    pop_size = 50
+    epoch = 100
+    # HHO
+    model = HHO(epoch, pop_size)
+
     # разделение изображения на блоки
     for i in range(blocks_v):
         for j in range(blocks_h):
-            block = img_arr[i * 8:(i + 1) * 8, j * 8:(j + 1) * 8, :]
+            block = phase[i * 8:(i + 1) * 8, j * 8:(j + 1) * 8, :]
             blocks[i * blocks_h + j] = block
 
     # Идем по блокам изображения
     for _block in blocks:
         dft_coeffs = np.fft.fft(_block)
+
+    # Создаем пустое изображение для сборки блоков
+    image = np.zeros((image_height, image_width, 3))
+
+    # Собираем блоки в изображение
+    for i in range(blocks_v):
+        for j in range(blocks_h):
+            block = blocks[i * blocks_h + j]
+            image[i * 8:(i + 1) * 8, j * 8:(j + 1) * 8, :] = block
 
 
 def calculate_epsilon(k, message_length):
@@ -120,3 +154,49 @@ def getBitPosition(i):
             return [2, 7]
         case 20:
             return [3, 7]
+
+
+def getBitInversePosition(i):
+    match i:
+        case 0:
+            return [5, 7]
+        case 1:
+            return [4, 7]
+        case 2:
+            return [6, 6]
+        case 3:
+            return [5, 6]
+        case 4:
+            return [4, 6]
+        case 5:
+            return [7, 5]
+        case 6:
+            return [6, 5]
+        case 7:
+            return [5, 5]
+        case 8:
+            return [4, 5]
+        case 9:
+            return [7, 4]
+        case 10:
+            return [6, 4]
+        case 11:
+            return [5, 4]
+        case 12:
+            return [7, 3]
+        case 13:
+            return [6, 3]
+        case 14:
+            return [5, 3]
+        case 15:
+            return [7, 2]
+        case 16:
+            return [6, 2]
+        case 17:
+            return [5, 2]
+        case 18:
+            return [7, 1]
+        case 19:
+            return [6, 1]
+        case 20:
+            return [5, 1]
