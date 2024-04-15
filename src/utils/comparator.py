@@ -1,6 +1,5 @@
 import numpy as np
 import math
-from scipy import signal
 
 C_MAX = 21
 PSNR_MAX = 50
@@ -41,9 +40,10 @@ def getCapacity_f(block_before, block_after):
     return count_different_cells(block_before, block_after) / C_MAX
 
 
-def optimization_function(block_before, block_after):
-    return (
-            K_C * getCapacity_f(block_before, block_after)
-            + K_PSNR * getPSNR_f(block_before, block_after)
-            + K_E * getErrors(block_before, block_after)
-    )
+
+# def optimization_function(block_before, block_after):
+#     return (
+#             K_C * getCapacity_f(block_before, block_after)
+#             + K_PSNR * getPSNR_f(block_before, block_after)
+#             + K_E * getErrors(block_before, block_after)
+#     )
