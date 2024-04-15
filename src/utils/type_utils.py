@@ -1,3 +1,32 @@
+import math
+
+import numpy as np
+
+
+def merge_matrices(matrices):
+
+    # Get the size of the merged matrix
+    size = int(math.sqrt(len(matrices)))
+
+    # Create the merged matrix
+    merged_matrix = np.zeros((size * 8, size * 8))
+
+    # Merge the matrices
+    start_row = 0
+    start_col = 0
+    for matrix in matrices:
+        end_row = start_row + len(matrix)
+        end_col = start_col + len(matrix[0])
+        merged_matrix[start_row:end_row, start_col:end_col] = matrix
+        start_col = end_col
+
+        if size * 8 == start_col:
+            start_col = 0
+            start_row += len(matrix[0])
+
+    return merged_matrix
+
+
 def string_to_bitstring(_string):
     """Converts a string to a bitstring.
 

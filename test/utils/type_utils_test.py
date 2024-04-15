@@ -1,9 +1,59 @@
 import unittest
 
-from utils.type_utils import getBitPosition, getBitInversePosition, string_to_bitstring
+from utils.type_utils import getBitPosition, getBitInversePosition, string_to_bitstring, merge_matrices
 
 
 class TypeUtilsTest(unittest.TestCase):
+
+    def test_merge_matrices(self):
+        matrix1 = [[0, 0, 0, 0, 0, 0, 0, 0],
+                   [0, 0, 0, 0, 0, 0, 0, 0],
+                   [0, 0, 0, 0, 0, 0, 0, 0],
+                   [0, 0, 0, 0, 0, 0, 0, 0],
+                   [0, 0, 0, 0, 0, 0, 0, 0],
+                   [0, 0, 0, 0, 0, 0, 0, 0],
+                   [0, 0, 0, 0, 0, 0, 0, 0],
+                   [0, 0, 0, 0, 0, 0, 0, 0]]
+        matrix2 = [[3, 0, 0, 0, 0, 0, 0, 0],
+                   [3, 0, 0, 0, 0, 0, 0, 0],
+                   [3, 0, 0, 0, 0, 0, 0, 0],
+                   [3, 0, 0, 0, 0, 0, 0, 0],
+                   [3, 0, 0, 0, 0, 0, 0, 0],
+                   [3, 0, 0, 0, 0, 0, 0, 0],
+                   [3, 0, 0, 0, 0, 0, 0, 0],
+                   [3, 0, 0, 0, 0, 0, 0, 0]]
+        matrix3 = [[1, 1, 1, 1, 1, 1, 1, 1],
+                   [1, 1, 1, 1, 1, 1, 1, 1],
+                   [1, 1, 1, 1, 1, 1, 1, 1],
+                   [1, 1, 1, 1, 1, 1, 1, 1],
+                   [1, 1, 1, 1, 1, 1, 1, 1],
+                   [1, 1, 1, 1, 1, 1, 1, 1],
+                   [1, 1, 1, 1, 1, 1, 1, 1],
+                   [1, 1, 1, 1, 1, 1, 1, 1]]
+        matrix4 = [[4, 1, 1, 1, 1, 1, 1, 1],
+                   [4, 1, 1, 1, 1, 1, 1, 1],
+                   [4, 1, 1, 1, 1, 1, 1, 1],
+                   [4, 1, 1, 1, 1, 1, 1, 1],
+                   [4, 1, 1, 1, 1, 1, 1, 1],
+                   [4, 1, 1, 1, 1, 1, 1, 1],
+                   [4, 1, 1, 1, 1, 1, 1, 1],
+                   [4, 1, 1, 1, 1, 1, 1, 1]]
+
+        array_of_matrices = [matrix1, matrix2, matrix3, matrix4]
+        result_matrix = merge_matrices(array_of_matrices)
+
+        self.assertEquals(0, result_matrix[0][0])
+        self.assertEquals(1, result_matrix[15][15])
+        self.assertEquals(3, result_matrix[7][8])
+        self.assertEquals(4, result_matrix[8][8])
+
+        array_of_matrices = [matrix1, matrix2, matrix3, matrix4, matrix1, matrix2, matrix3, matrix4, matrix4]
+        result_matrix = merge_matrices(array_of_matrices)
+
+        self.assertEquals(0, result_matrix[0][0])
+        self.assertEquals(1, result_matrix[23][23])
+        self.assertEquals(4, result_matrix[16][16])
+        self.assertEquals(4, result_matrix[23][8])
 
     def test_string_to_bitstring(self):
         bits = string_to_bitstring('HHH')
