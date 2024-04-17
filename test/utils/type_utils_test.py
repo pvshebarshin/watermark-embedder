@@ -47,7 +47,7 @@ class TypeUtilsTest(unittest.TestCase):
         self.assertEquals(3, result_matrix[7][8])
         self.assertEquals(4, result_matrix[8][8])
 
-        array_of_matrices = [matrix1, matrix2, matrix3, matrix4, matrix1, matrix2, matrix3, matrix4, matrix4]
+        array_of_matrices = [matrix1, matrix1, matrix1, matrix3, matrix3, matrix3, matrix4, matrix4, matrix4]
         result_matrix = merge_matrices(array_of_matrices)
 
         self.assertEquals(0, result_matrix[0][0])

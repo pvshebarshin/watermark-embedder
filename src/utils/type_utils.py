@@ -9,7 +9,7 @@ def merge_matrices(matrices):
     size = int(math.sqrt(len(matrices)))
 
     # Create the merged matrix
-    merged_matrix = np.zeros((size * 8, size * 8))
+    merged_matrix = np.zeros((size * len(matrices[0]), size * len(matrices[0][0])))
 
     # Merge the matrices
     start_row = 0
