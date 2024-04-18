@@ -34,7 +34,8 @@ TEMP_MAG = [[0, 0, 0, 0, 0, 0, 0, 0],
 
 
 def getErrors(block_after):
-    real, imag = cv2.polarToCart(TEMP_MAG, block_after + math.pi)
+    global TEMP_MAG
+    real, imag = cv2.polarToCart(np.array(TEMP_MAG, dtype='float32'), (block_after + math.pi).astype('float32'))
     back = cv2.merge([real, imag])
     back_ishift = np.fft.ifftshift(back)
     img_back = cv2.idft(back_ishift)
@@ -54,6 +55,7 @@ def getErrors(block_after):
 
 
 def optimization_function(solution):
+    global TEMP_BLOCK
     block_before = deepcopy(TEMP_BLOCK)
     for i in range(len(solution)):
         pos = getBitPosition(i)
@@ -67,7 +69,7 @@ def optimization_function(solution):
     return (
             K_C * getCapacity_f(block_before, TEMP_BLOCK)
             + K_PSNR * getPSNR_f(block_before, TEMP_BLOCK)
-            + K_E * getErrors(TEMP_BLOCK)
+            # + K_E * getErrors(TEMP_BLOCK)
     )
 
 
@@ -83,6 +85,10 @@ def embed_secret_message(image_container, secret_message, model, epsilon=1, phi_
         "minmax": "min",
         "log_to": None,
         "save_population": False,
+    }
+
+    term_dict = {
+        "max_time": 20  # 60 seconds to run this algorithm only
     }
 
     # convert image to floats and do dft saving as complex output
@@ -119,6 +125,8 @@ def embed_secret_message(image_container, secret_message, model, epsilon=1, phi_
 
     # Идем по блокам изображения
     for i in range(len(blocks)):
+        if len(bits) == 0:
+            break
         global TEMP_BLOCK
         global TEMP_MAG
         TEMP_BLOCK = blocks[i]
@@ -126,16 +134,20 @@ def embed_secret_message(image_container, secret_message, model, epsilon=1, phi_
         best_position, best_fitness = model.solveProblem(problem)
 
         blocks[i] = TEMP_BLOCK
+        print(blocks[i])
         for position_number in range(len(best_position)):
             pos = getBitPosition(position_number)
-            _block = blocks[position_number][pos[1]][pos[0]]
+            _block = blocks[i][pos[1]][pos[0]]
+
             if len(bits) == 0:
                 break
 
             bit = bits[0]
-            if phi_1 - epsilon <= _block <= phi_1 - epsilon:
+            if phi_1 - epsilon <= _block <= phi_1 + epsilon:
+                print(_block)
+                print(bits)
                 if bit == '0':
-                    blocks[position_number][pos[1]][pos[0]] = -_block
+                    blocks[i][pos[1]][pos[0]] = -_block
                     bits = bits[1:]
                 else:
                     bits = bits[1:]
@@ -147,7 +159,7 @@ def embed_secret_message(image_container, secret_message, model, epsilon=1, phi_
     phase_for_image += math.pi
 
     # convert magnitude and phase into cartesian real and imaginary components
-    real, imag = cv2.polarToCart(mag, phase_for_image)
+    real, imag = cv2.polarToCart(mag, phase_for_image.astype('float32'))
 
     # combine cartesian components into one complex image
     back = cv2.merge([real, imag])

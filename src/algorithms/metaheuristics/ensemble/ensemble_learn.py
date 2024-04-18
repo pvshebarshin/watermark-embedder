@@ -15,11 +15,14 @@ class MetaheuristicEnsembleLearn:
         self.model3 = model3
 
     def switchModel3(self, problem, choices, starting_positions=None):
+        term_dict = {
+            "max_time": 20  # 60 seconds to run this algorithm only
+        }
         dice = rnd(choices)
         if starting_positions is not None:
             if dice == 1:
                 choices.remove(dice)
-                return self.model1.solve(problem)
+                return self.model1.solve(problem, termination=term_dict)
             elif dice == 2:
                 choices.remove(dice)
                 return self.model2.solve(problem)
@@ -29,7 +32,7 @@ class MetaheuristicEnsembleLearn:
         else:
             if dice == 1:
                 choices.remove(dice)
-                return self.model1.solve(problem, starting_positions=starting_positions)
+                return self.model1.solve(problem, starting_positions=starting_positions, termination=term_dict)
             elif dice == 2:
                 choices.remove(dice)
                 return self.model2.solve(problem, starting_positions=starting_positions)
