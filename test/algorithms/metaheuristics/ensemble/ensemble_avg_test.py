@@ -4,11 +4,10 @@ from algorithms.metaheuristics.abc import ABC
 from algorithms.metaheuristics.de import DE
 from algorithms.metaheuristics.ensemble.ensemble_avg import MetaheuristicEnsembleAvg
 from algorithms.metaheuristics.hho import HHO
-from utils.functions import brent_function, schwefel_function, rosenbrook_function
+from utils.functions import brent_function, rosenbrook_function, ackley_function
 
 
 class EnsembleAvgTest(unittest.TestCase):
-
     problem_brent = {
         "fit_func": brent_function,
         "lb": [-20, -20],
@@ -18,10 +17,10 @@ class EnsembleAvgTest(unittest.TestCase):
         "save_population": False,
     }
 
-    problem_schwefel = {
-        "fit_func": schwefel_function,
-        "lb": [-500, -500],
-        "ub": [500, 500],
+    problem_ackley = {
+        "fit_func": ackley_function,
+        "lb": [-32.768, -32.768],
+        "ub": [32.768, 32.768],
         "minmax": "min",
         "log_to": None,
         "save_population": False,
@@ -37,6 +36,9 @@ class EnsembleAvgTest(unittest.TestCase):
     }
 
     def test_ensemble_one_evr(self):
+        term_dict = {
+            "max_time": 60  # seconds
+        }
         epoch = 500
         pop_size = 50
         wf = 0.7
@@ -44,7 +46,7 @@ class EnsembleAvgTest(unittest.TestCase):
         strategy = 0
 
         model = DE(epoch, pop_size, wf, cr, strategy)
-        ensemble = MetaheuristicEnsembleAvg(model)
+        ensemble = MetaheuristicEnsembleAvg(model, term_dict=term_dict)
         best_position, best_fitness = ensemble.solveProblem(EnsembleAvgTest.problem_brent)
         print(f"Best solution: {best_position}, Best fitness: {best_fitness}")
 
@@ -65,7 +67,7 @@ class EnsembleAvgTest(unittest.TestCase):
         hho = HHO(epoch, pop_size)
 
         ensemble = MetaheuristicEnsembleAvg(de, hho)
-        best_position, best_fitness = ensemble.solveProblem(EnsembleAvgTest.problem_schwefel)
+        best_position, best_fitness = ensemble.solveProblem(EnsembleAvgTest.problem_ackley)
         print(f"Best solution: {best_position}, Best fitness: {best_fitness}")
         self.assertTrue(best_fitness < 0.1)
 

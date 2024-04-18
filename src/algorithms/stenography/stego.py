@@ -7,9 +7,6 @@ import numpy as np
 from utils.comparator import getCapacity_f, getPSNR_f
 from utils.type_utils import string_to_bitstring, getBitPosition, getBitInversePosition, merge_matrices
 
-C_MAX = 21
-PSNR_MAX = 50
-
 K_E = 0.5
 K_PSNR = 0.4
 K_C = 0.1
@@ -49,8 +46,10 @@ def getErrors(block_after):
     errors = 0
     for i in range(len(phase)):
         for j in range(len(phase[0])):
-            if phase[i][j] != block_after[i][j]:
+            # print(phase[i][j], block_after[i][j])
+            if math.fabs(math.fabs(phase[i][j]) - math.fabs(block_after[i][j])) > 0.1:
                 errors += 1
+    print(errors)
     return errors
 
 
@@ -69,7 +68,7 @@ def optimization_function(solution):
     return (
             K_C * getCapacity_f(block_before, TEMP_BLOCK)
             + K_PSNR * getPSNR_f(block_before, TEMP_BLOCK)
-            # + K_E * getErrors(TEMP_BLOCK)
+            + K_E * getErrors(TEMP_BLOCK)
     )
 
 
@@ -85,10 +84,6 @@ def embed_secret_message(image_container, secret_message, model, epsilon=1, phi_
         "minmax": "min",
         "log_to": None,
         "save_population": False,
-    }
-
-    term_dict = {
-        "max_time": 20  # 60 seconds to run this algorithm only
     }
 
     # convert image to floats and do dft saving as complex output
@@ -109,7 +104,8 @@ def embed_secret_message(image_container, secret_message, model, epsilon=1, phi_
     blocks_h = width // 8
 
     # создание массива блоков
-    blocks = mags = np.zeros((blocks_v * blocks_h, 8, 8))
+    blocks = np.zeros((blocks_v * blocks_h, 8, 8))
+    mags = np.zeros((blocks_v * blocks_h, 8, 8))
 
     # Получение эпсилона
     calculate_epsilon(len(blocks), len(secret_message))
@@ -155,11 +151,11 @@ def embed_secret_message(image_container, secret_message, model, epsilon=1, phi_
                 continue
 
     # Собираем блоки в изображение
-    phase_for_image = merge_matrices(blocks)
+    phase_for_image = np.array(merge_matrices(blocks), dtype='float32')
     phase_for_image += math.pi
 
     # convert magnitude and phase into cartesian real and imaginary components
-    real, imag = cv2.polarToCart(mag, phase_for_image.astype('float32'))
+    real, imag = cv2.polarToCart(mag, phase_for_image)
 
     # combine cartesian components into one complex image
     back = cv2.merge([real, imag])

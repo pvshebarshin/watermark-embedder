@@ -9,35 +9,22 @@ def rnd(choices):
 
 class MetaheuristicEnsembleLearn:
 
-    def __init__(self, model1, model2=None, model3=None):
+    def __init__(self, model1, model2=None, model3=None, term_dict=None):
         self.model1 = model1
         self.model2 = model2
         self.model3 = model3
+        self.term_dict = term_dict
 
     def switchModel3(self, problem, choices, starting_positions=None):
-        term_dict = {
-            "max_time": 20  # 60 seconds to run this algorithm only
-        }
         dice = rnd(choices)
-        if starting_positions is not None:
-            if dice == 1:
-                choices.remove(dice)
-                return self.model1.solve(problem, termination=term_dict)
-            elif dice == 2:
-                choices.remove(dice)
-                return self.model2.solve(problem)
-            else:
-                choices.remove(dice)
-                return self.model3.solve(problem)
+        if dice == 1:
+            choices.remove(dice)
+            return self.model1.solve(problem, starting_positions=starting_positions, termination=self.term_dict)
+        elif dice == 2:
+            choices.remove(dice)
+            return self.model2.solve(problem, starting_positions=starting_positions, termination=self.term_dict)
         else:
-            if dice == 1:
-                choices.remove(dice)
-                return self.model1.solve(problem, starting_positions=starting_positions, termination=term_dict)
-            elif dice == 2:
-                choices.remove(dice)
-                return self.model2.solve(problem, starting_positions=starting_positions)
-            else:
-                return self.model3.solve(problem, starting_positions=starting_positions)
+            return self.model3.solve(problem, starting_positions=starting_positions, termination=self.term_dict)
 
     def solveProblem(self, problem):
         if self.model3 is not None:
@@ -52,9 +39,7 @@ class MetaheuristicEnsembleLearn:
             else:
                 best_position, best_fitness = self.switchModel3(problem, [1])
                 return best_position, best_fitness
-
         else:
-
             if self.model2 is not None:
                 choices = [1, 2]
                 best_position, best_fitness = self.switchModel3(problem, choices)

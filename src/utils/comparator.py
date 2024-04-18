@@ -4,10 +4,6 @@ import math
 C_MAX = 21
 PSNR_MAX = 50
 
-K_E = 0.5
-K_PSNR = 0.4
-K_C = 0.1
-
 
 def count_different_cells(matrix1, matrix2):
     count = 0
@@ -18,14 +14,14 @@ def count_different_cells(matrix1, matrix2):
     return count
 
 
-def mse(I, S):
-    if I.shape != S.shape:
+def mse(i, s):
+    if i.shape != s.shape:
         raise ValueError("Изображения должны иметь одинаковый размер.")
 
-    diff = I - S
+    diff = i - s
     squared_diff = diff ** 2
     sum_squared_diff = np.sum(squared_diff)
-    return sum_squared_diff / (I.shape[0] * I.shape[1])
+    return sum_squared_diff / (i.shape[0] * i.shape[1])
 
 
 def getPSNR_f(block_before, block_after):
@@ -38,12 +34,3 @@ def getPSNR_f(block_before, block_after):
 
 def getCapacity_f(block_before, block_after):
     return count_different_cells(block_before, block_after) / C_MAX
-
-
-
-# def optimization_function(block_before, block_after):
-#     return (
-#             K_C * getCapacity_f(block_before, block_after)
-#             + K_PSNR * getPSNR_f(block_before, block_after)
-#             + K_E * getErrors(block_before, block_after)
-#     )

@@ -3,10 +3,11 @@ import concurrent.futures
 
 class MetaheuristicEnsembleAvg:
 
-    def __init__(self, model1, model2=None, model3=None):
+    def __init__(self, model1, model2=None, model3=None, term_dict=None):
         self.model1 = model1
         self.model2 = model2
         self.model3 = model3
+        self.term_dict = term_dict
 
     @staticmethod
     def average(lst):
@@ -68,7 +69,3 @@ class MetaheuristicEnsembleAvg:
 
                 best_position1, best_fitness1 = future1.result()
                 return best_position1, best_fitness1
-
-# берем популяцию, отрабатываем первой по ней, затем другую и популяю передаем второй
-
-# Во время оптимизации по очереди выбираем метаэвристики (чередуем по поколениям)

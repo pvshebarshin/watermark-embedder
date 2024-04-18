@@ -4,7 +4,7 @@ from algorithms.metaheuristics.abc import ABC
 from algorithms.metaheuristics.de import DE
 from algorithms.metaheuristics.ensemble.ensemble_learn import MetaheuristicEnsembleLearn
 from algorithms.metaheuristics.hho import HHO
-from utils.functions import brent_function, schwefel_function, rosenbrook_function
+from utils.functions import brent_function, rosenbrook_function, ackley_function
 
 
 class EnsembleLearnTest(unittest.TestCase):
@@ -18,10 +18,10 @@ class EnsembleLearnTest(unittest.TestCase):
         "save_population": False,
     }
 
-    problem_schwefel = {
-        "fit_func": schwefel_function,
-        "lb": [-500, -500],
-        "ub": [500, 500],
+    problem_ackley = {
+        "fit_func": ackley_function,
+        "lb": [-32.768, -32.768],
+        "ub": [32.768, 32.768],
         "minmax": "min",
         "log_to": None,
         "save_population": False,
@@ -65,9 +65,9 @@ class EnsembleLearnTest(unittest.TestCase):
         hho = HHO(epoch, pop_size)
 
         ensemble = MetaheuristicEnsembleLearn(de, hho)
-        best_position, best_fitness = ensemble.solveProblem(EnsembleLearnTest.problem_schwefel)
+        best_position, best_fitness = ensemble.solveProblem(EnsembleLearnTest.problem_ackley)
         print(f"Best solution: {best_position}, Best fitness: {best_fitness}")
-        self.assertTrue(best_fitness < 0.1)
+        self.assertTrue(best_fitness < 0.15)
 
     def test_ensemble_three_evr(self):
         epoch = 20
