@@ -1,6 +1,6 @@
 import unittest
 
-from algorithms.metaheuristics.abc import ABC
+from algorithms.metaheuristics.single.abc import ABC
 from utils.functions import brent_function
 
 

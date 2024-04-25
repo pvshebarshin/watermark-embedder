@@ -1,6 +1,6 @@
 import unittest
 
-from algorithms.metaheuristics.hho import HHO
+from algorithms.metaheuristics.single.hho import HHO
 from utils.functions import easom_function
 
 

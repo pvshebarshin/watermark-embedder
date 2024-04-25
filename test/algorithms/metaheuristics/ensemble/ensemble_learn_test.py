@@ -1,9 +1,9 @@
 import unittest
 
-from algorithms.metaheuristics.abc import ABC
-from algorithms.metaheuristics.de import DE
+from algorithms.metaheuristics.single.abc import ABC
+from algorithms.metaheuristics.single.de import DE
 from algorithms.metaheuristics.ensemble.ensemble_learn import MetaheuristicEnsembleLearn
-from algorithms.metaheuristics.hho import HHO
+from algorithms.metaheuristics.single.hho import HHO
 from utils.functions import brent_function, rosenbrook_function, ackley_function
 
 

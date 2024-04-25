@@ -1,6 +1,6 @@
 import unittest
 
-from algorithms.metaheuristics.gbo import GBO
+from algorithms.metaheuristics.single.gbo import GBO
 from utils.functions import ackley_function
 
 

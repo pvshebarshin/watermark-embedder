@@ -1,6 +1,6 @@
 import unittest
 
-from algorithms.metaheuristics.aco import ACO
+from algorithms.metaheuristics.single.aco import ACO
 from utils.functions import brent_function
 
 

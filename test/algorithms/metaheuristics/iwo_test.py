@@ -1,6 +1,6 @@
 import unittest
 
-from algorithms.metaheuristics.iwo import IWO
+from algorithms.metaheuristics.single.iwo import IWO
 from utils.functions import keane_function
 
 

@@ -1,6 +1,6 @@
 import unittest
 
-from algorithms.metaheuristics.pso import PSO
+from algorithms.metaheuristics.single.pso import PSO
 from utils.functions import shubert_function
 
 

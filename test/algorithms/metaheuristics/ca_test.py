@@ -1,6 +1,6 @@
 import unittest
 
-from algorithms.metaheuristics.ca import CA
+from algorithms.metaheuristics.single.ca import CA
 from utils.functions import brent_function
 
 

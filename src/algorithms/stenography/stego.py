@@ -29,9 +29,12 @@ TEMP_MAG = [[0, 0, 0, 0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0, 0, 0, 0]]
 
+ERRORS = 64
+
 
 def getErrors(block_after):
     global TEMP_MAG
+    global ERRORS
     real, imag = cv2.polarToCart(np.array(TEMP_MAG, dtype='float32'), (block_after + math.pi).astype('float32'))
     back = cv2.merge([real, imag])
     back_ishift = np.fft.ifftshift(back)
@@ -44,12 +47,13 @@ def getErrors(block_after):
     mag, phase = cv2.cartToPolar(dft_shift[:, :, 0], dft_shift[:, :, 1])
     phase -= math.pi
     errors = 0
-    for i in range(len(phase)):
-        for j in range(len(phase[0])):
-            # print(phase[i][j], block_after[i][j])
-            if math.fabs(math.fabs(phase[i][j]) - math.fabs(block_after[i][j])) > 0.1:
-                errors += 1
-    print(errors)
+    for i in range(21):
+        pos = getBitPosition(i)
+        # print(phase[i][j], block_after[i][j])
+        if math.fabs(math.fabs(phase[pos[1]][pos[0]]) - math.fabs(block_after[pos[1]][pos[0]])) > 1:
+            errors += 1
+    # print(errors)
+    ERRORS = errors
     return errors
 
 
@@ -125,12 +129,16 @@ def embed_secret_message(image_container, secret_message, model, epsilon=1, phi_
             break
         global TEMP_BLOCK
         global TEMP_MAG
+        global ERRORS
         TEMP_BLOCK = blocks[i]
         TEMP_MAG = mags[i]
+        _iterator = 1
         best_position, best_fitness = model.solveProblem(problem)
+        while ERRORS != 0 and _iterator < iterations:
+            best_position, best_fitness = model.solveProblem(problem)
+            _iterator += 1
 
         blocks[i] = TEMP_BLOCK
-        print(blocks[i])
         for position_number in range(len(best_position)):
             pos = getBitPosition(position_number)
             _block = blocks[i][pos[1]][pos[0]]

@@ -1,6 +1,6 @@
 import unittest
 
-from algorithms.metaheuristics.fbio import FBIO
+from algorithms.metaheuristics.single.fbio import FBIO
 from utils.functions import eggholder_function
 
 

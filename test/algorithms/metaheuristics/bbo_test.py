@@ -1,6 +1,6 @@
 import unittest
 
-from algorithms.metaheuristics.bbo import BBO
+from algorithms.metaheuristics.single.bbo import BBO
 from utils.functions import xin_she_yang_function_4
 
 

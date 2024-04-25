@@ -1,6 +1,6 @@
 import unittest
 
-from algorithms.metaheuristics.de import DE
+from algorithms.metaheuristics.single.de import DE
 from utils.functions import brent_function
 
 
