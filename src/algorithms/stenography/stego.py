@@ -11,6 +11,9 @@ K_E = 0.5
 K_PSNR = 0.4
 K_C = 0.1
 
+PHI_1 = 1.57
+EPSILON = 1
+
 TEMP_BLOCK = [[0, 0, 0, 0, 0, 0, 0, 0],
               [0, 0, 0, 0, 0, 0, 0, 0],
               [0, 0, 0, 0, 0, 0, 0, 0],
@@ -29,12 +32,15 @@ TEMP_MAG = [[0, 0, 0, 0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0, 0, 0, 0]]
 
-ERRORS = 64
+ERRORS = 21
 
 
 def getErrors(block_after):
     global TEMP_MAG
     global ERRORS
+    global EPSILON
+    global PHI_1
+
     real, imag = cv2.polarToCart(np.array(TEMP_MAG, dtype='float32'), (block_after + math.pi).astype('float32'))
     back = cv2.merge([real, imag])
     back_ishift = np.fft.ifftshift(back)
@@ -46,13 +52,15 @@ def getErrors(block_after):
     dft_shift = np.fft.fftshift(dft)
     mag, phase = cv2.cartToPolar(dft_shift[:, :, 0], dft_shift[:, :, 1])
     phase -= math.pi
+
     errors = 0
     for i in range(21):
         pos = getBitPosition(i)
+        if (PHI_1 - EPSILON <= phase[pos[1]][pos[0]] <= PHI_1 + EPSILON) == (PHI_1 - EPSILON <= block_after[pos[1]][pos[0]] <= PHI_1 + EPSILON):
         # print(phase[i][j], block_after[i][j])
-        if math.fabs(math.fabs(phase[pos[1]][pos[0]]) - math.fabs(block_after[pos[1]][pos[0]])) > 1:
+        # if math.fabs(math.fabs(phase[pos[1]][pos[0]]) - math.fabs(block_after[pos[1]][pos[0]])) > 1:
             errors += 1
-    # print(errors)
+    print(errors)
     ERRORS = errors
     return errors
 
@@ -76,7 +84,11 @@ def optimization_function(solution):
     )
 
 
-def embed_secret_message(image_container, secret_message, model, epsilon=1, phi_0=-1.57, phi_1=1.57, iterations=5):
+def embed_secret_message(image_container, secret_message, model, epsilon=1, phi_1=1.57, iterations=5):
+    global PHI_1
+    global EPSILON
+    PHI_1 = phi_1
+    EPSILON = epsilon
     # define problem
     problem = {
         "fit_func": optimization_function,
@@ -90,14 +102,7 @@ def embed_secret_message(image_container, secret_message, model, epsilon=1, phi_
         "save_population": False,
     }
 
-    # convert image to floats and do dft saving as complex output
-    dft = cv2.dft(np.float32(image_container), flags=cv2.DFT_COMPLEX_OUTPUT)
-
-    # apply shift of origin from upper left corner to center of image
-    dft_shift = np.fft.fftshift(dft)
-
-    # extract magnitude and phase images
-    mag, phase = cv2.cartToPolar(dft_shift[:, :, 0], dft_shift[:, :, 1])
+    mag, phase = disassembleImage(image_container)
     phase -= math.pi
 
     # получение размеров изображения
@@ -158,6 +163,22 @@ def embed_secret_message(image_container, secret_message, model, epsilon=1, phi_
             else:
                 continue
 
+    img_back = assembleImage(blocks, mag)
+    return img_back
+
+
+def disassembleImage(image_container):
+    # convert image to floats and do dft saving as complex output
+    dft = cv2.dft(np.float32(image_container), flags=cv2.DFT_COMPLEX_OUTPUT)
+
+    # apply shift of origin from upper left corner to center of image
+    dft_shift = np.fft.fftshift(dft)
+
+    # extract magnitude and phase images
+    return cv2.cartToPolar(dft_shift[:, :, 0], dft_shift[:, :, 1])
+
+
+def assembleImage(blocks, mag):
     # Собираем блоки в изображение
     phase_for_image = np.array(merge_matrices(blocks), dtype='float32')
     phase_for_image += math.pi
@@ -178,8 +199,7 @@ def embed_secret_message(image_container, secret_message, model, epsilon=1, phi_
     img_back = cv2.magnitude(img_back[:, :, 0], img_back[:, :, 1])
 
     # re-normalize to 8-bits
-    img_back = cv2.normalize(img_back, None, alpha=0, beta=255, norm_type=cv2.NORM_MINMAX, dtype=cv2.CV_8U)
-    return img_back
+    return cv2.normalize(img_back, None, alpha=0, beta=255, norm_type=cv2.NORM_MINMAX, dtype=cv2.CV_8U)
 
 
 def calculate_epsilon(k, message_length):
