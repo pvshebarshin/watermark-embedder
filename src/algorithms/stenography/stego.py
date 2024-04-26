@@ -56,11 +56,10 @@ def getErrors(block_after):
     errors = 0
     for i in range(21):
         pos = getBitPosition(i)
-        if (PHI_1 - EPSILON <= phase[pos[1]][pos[0]] <= PHI_1 + EPSILON) == (PHI_1 - EPSILON <= block_after[pos[1]][pos[0]] <= PHI_1 + EPSILON):
-        # print(phase[i][j], block_after[i][j])
-        # if math.fabs(math.fabs(phase[pos[1]][pos[0]]) - math.fabs(block_after[pos[1]][pos[0]])) > 1:
+        if (PHI_1 - EPSILON <= phase[pos[1]][pos[0]] <= PHI_1 + EPSILON) == (
+                PHI_1 - EPSILON <= block_after[pos[1]][pos[0]] <= PHI_1 + EPSILON):
             errors += 1
-    print(errors)
+    # print(errors)
     ERRORS = errors
     return errors
 
@@ -153,8 +152,6 @@ def embed_secret_message(image_container, secret_message, model, epsilon=1, phi_
 
             bit = bits[0]
             if phi_1 - epsilon <= _block <= phi_1 + epsilon:
-                print(_block)
-                print(bits)
                 if bit == '0':
                     blocks[i][pos[1]][pos[0]] = -_block
                     bits = bits[1:]
