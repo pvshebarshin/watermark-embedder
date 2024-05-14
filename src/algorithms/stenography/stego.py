@@ -83,7 +83,7 @@ def optimization_function(solution):
     )
 
 
-def embed_secret_message(image_container, secret_message, model, epsilon=1, phi_1=1.57, iterations=5):
+def embed_secret_message(image_container, secret_message, model, epsilon=1, phi_1=1.57, iterations=1):
     global PHI_1
     global EPSILON
     PHI_1 = phi_1
