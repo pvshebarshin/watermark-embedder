@@ -1,1 +1,5 @@
-Watermark-embedder
+### Watermark Embedder
+Methods of embedding information in digital signs, in particular, steganography and digital watermarks have proven their effectiveness in providing hidden data transmission and authentication of digital images, respectively. Increasing cybersecurity requirements requires improving the effectiveness of data injection methods.
+Metaheuristic optimization algorithms attract attention as a promising approach to improving the quality of embedding. Although traditional metaheuristics are widely used in this field, the potential for their joint use is a promising area for study.
+In this paper, a comparative study of three approaches to the construction of ensembles of metaheuristics is carried out to find optimal options for embedding the discrete Fourier transform (DFT) into the phase spectrum. This algorithm is an error-free embedding algorithm, it provides error-free extraction of embedded data and high invisibility of embedding due to metaheuristic optimization.
+This study highlights the need for further study of modern optimization algorithms to improve data embedding methods.
